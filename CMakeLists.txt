@@ -22,6 +22,10 @@ if (Boost_VERSION_MACRO LESS 108100)
     add_subdirectory(url)
 endif()
 
+add_subdirectory(spdlog)
+add_subdirectory(magic_enum)
+add_subdirectory(mscharconv)
+
 add_library(http)
 target_link_libraries(http PUBLIC Boost::boost)
 target_link_libraries(http PUBLIC Boost::url)
@@ -33,9 +37,11 @@ target_sources(http
     PUBLIC
         http/client.h
         http/streaming_download_handler.h
+        http/inflater.h
     PRIVATE
         http/client.cpp
         http/impl/streaming_download_operation.h
 )
 
+add_subdirectory(mls)
 add_subdirectory(asn1)

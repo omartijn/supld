@@ -4,3 +4,12 @@
 [submodule "asn1c-cmake-module"]
 	path = asn1c-cmake-module
 	url = https://github.com/terminatorul/asn1c-cmake-module.git
+[submodule "mscharconv"]
+	path = mscharconv
+	url = https://github.com/iboB/mscharconv.git
+[submodule "spdlog"]
+	path = spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "magic_enum"]
+	path = magic_enum
+	url = https://github.com/Neargye/magic_enum.git
