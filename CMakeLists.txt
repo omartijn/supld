@@ -7,8 +7,9 @@ project(supld
     LANGUAGES CXX
 )
 
-find_package(Boost REQUIRED)
+find_package(Boost COMPONENTS program_options REQUIRED)
 find_package(OpenSSL COMPONENTS Crypto SSL REQUIRED)
+find_package(ZLIB REQUIRED)
 find_package(Threads REQUIRED)
 
 if (Boost_VERSION_MACRO LESS 108100)
@@ -45,3 +46,20 @@ target_sources(http
 
 add_subdirectory(mls)
 add_subdirectory(asn1)
+
+add_executable(supld)
+
+target_sources(supld
+    PRIVATE
+        main.cpp
+)
+
+target_link_libraries(supld
+    PRIVATE
+        http
+        mls
+        Boost::program_options
+        ZLIB::ZLIB
+    INTERFACE
+        ASN1::supl
+)
