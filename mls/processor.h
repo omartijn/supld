@@ -32,7 +32,7 @@ namespace mls {
              *  @param  size    The number of bytes that were received
              *  @param  ec      The error code to set on failure
              */
-            void commit(size_t size, std::error_code&);
+            void commit(size_t size, std::error_code& ec);
 
             /**
              *  Get the records for cell towers using
@@ -65,6 +65,7 @@ namespace mls {
             std::vector<mls::record>  _gsm_records;
             std::vector<mls::record>  _umts_records;
             std::vector<mls::record>  _lte_records;
+            bool                      _header_received{};
     };
 
 }

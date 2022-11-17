@@ -8,7 +8,7 @@ namespace mls {
         return _buffer.prepare(size);
     }
 
-    void processor::commit(size_t size, std::error_code&)
+    void processor::commit(size_t size, std::error_code& ec)
     {
         if (size == 0) {
             return;
@@ -29,28 +29,39 @@ namespace mls {
             std::string_view line{ data.substr(0, pos) };
             mls::record record;
 
-            // remove th enewline separator itself
+            // remove the recorrd, as well as the newline
             data.remove_prefix(pos + 2);
 
-            // process the record data
-            auto [radio, success] = record.load(line);
+            // are we processing the header
+            if (!std::exchange(_header_received, true)) {
+                // check whether the header matches - if fields were rearranged
+                // we'd probably fail to process the data
+                if (line != "radio,mcc,net,area,cell,unit,lon,lat,range,samples,changeable,created,updated,averageSignal") {
+                    spdlog::error("MLS data header mismatch: {}", line);
+                    ec = std::make_error_code(std::errc::bad_message);
+                    return;
+                }
+            } else {
+                // process the record data
+                auto [radio, success] = record.load(line);
 
-            // check whether the record loaded successfully
-            if (!success) {
-                spdlog::warn("Invalid MLS record received: {}", line);
-                continue;
-            }
+                // check whether the record loaded successfully
+                if (!success) {
+                    spdlog::warn("Invalid MLS record received: {}", line);
+                    continue;
+                }
 
-            switch (radio) {
-                case mls::radio::GSM:
-                    _gsm_records.push_back(record);
-                    break;
-                case mls::radio::UMTS:
-                    _umts_records.push_back(record);
-                    break;
-                case mls::radio::LTE:
-                    _lte_records.push_back(record);
-                    break;
+                switch (radio) {
+                    case mls::radio::GSM:
+                        _gsm_records.push_back(record);
+                        break;
+                    case mls::radio::UMTS:
+                        _umts_records.push_back(record);
+                        break;
+                    case mls::radio::LTE:
+                        _lte_records.push_back(record);
+                        break;
+                }
             }
         }
 
