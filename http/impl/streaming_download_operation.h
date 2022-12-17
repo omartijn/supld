@@ -32,7 +32,7 @@ namespace http::impl {
                 boost::beast::stable_async_base<handler_type, boost::asio::ip::tcp::resolver::executor_type>{ std::forward<handler_type>(completion_token), resolver.get_executor() },
                 _data{ boost::beast::allocate_stable<data>(*this, resolver.get_executor(), url, handler) }
             {
-                boost::asio::ip::tcp::resolver::query query{ url.encoded_host(), "https" };
+                boost::asio::ip::tcp::resolver::query query{ boost::core::string_view{ url.encoded_host() }, "https" };
                 resolver.async_resolve(query, std::move(*this));
             }
 
@@ -129,10 +129,10 @@ namespace http::impl {
                 data(boost::asio::any_io_executor executor, boost::urls::url_view url, download_handler& handler) :
                     context{ boost::asio::ssl::context::method::tlsv1_client },
                     stream{ executor, context },
-                    request{ boost::beast::http::verb::get, url.encoded_path(), 11 },
+                    request{ boost::beast::http::verb::get, std::string_view{ url.encoded_path() }, 11 },
                     handler{ handler }
                 {
-                    request.set(boost::beast::http::field::host, url.encoded_host());
+                    request.set(boost::beast::http::field::host, std::string_view{ url.encoded_host() });
                     request.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
     
                     response.body_limit(std::numeric_limits<std::uint64_t>::max());

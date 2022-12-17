@@ -21,6 +21,8 @@ if (Boost_VERSION_MACRO LESS 108100)
 
     set(BOOST_URL_FIND_PACKAGE_BOOST ON)
     add_subdirectory(url)
+else()
+    find_package(Boost COMPONENTS url REQUIRED)
 endif()
 
 add_subdirectory(spdlog)
@@ -33,6 +35,8 @@ target_link_libraries(http PUBLIC Boost::url)
 target_link_libraries(http PUBLIC OpenSSL::Crypto)
 target_link_libraries(http PUBLIC OpenSSL::SSL)
 target_link_libraries(http PUBLIC Threads::Threads)
+
+target_compile_definitions(http PUBLIC BOOST_BEAST_USE_STD_STRING_VIEW)
 
 target_sources(http
     PUBLIC

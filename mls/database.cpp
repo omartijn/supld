@@ -49,7 +49,7 @@ namespace mls {
 
     void database::load_data(boost::urls::url_view url) noexcept
     {
-        spdlog::info("Retrieving {}", url.string());
+        spdlog::info("Retrieving {}", url.buffer());
 
         struct request_data {
             processor                       processor   {           };
